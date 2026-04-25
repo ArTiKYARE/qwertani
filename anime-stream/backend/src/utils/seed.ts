@@ -104,35 +104,48 @@ async function seed() {
   ];
 
   for (const data of animeData) {
-    const anime = await prisma.anime.upsert({
+    // Сначала пытаемся найти существующее аниме по названию
+    const existingAnime = await prisma.anime.findFirst({
       where: { title: data.title },
-      update: data,
-      create: {
-        ...data,
-        episodes: {
-          create: Array.from({ length: 5 }, (_, i) => ({
-            number: i + 1,
-            title: `Эпизод ${i + 1}`,
-            sources: {
-              create: [
-                {
-                  playerType: 'iframe',
-                  url: `https://example.com/player/${data.title.replace(/\s/g, '')}/${i + 1}`,
-                  dubLang: 'ru',
-                  translator: 'Студия Аниме',
-                },
-                {
-                  playerType: 'iframe',
-                  url: `https://example.com/player/${data.title.replace(/\s/g, '')}/${i + 1}/en`,
-                  dubLang: 'en',
-                  translator: 'English Subs',
-                },
-              ],
-            },
-          })),
-        },
-      },
     });
+
+    let anime;
+    if (existingAnime) {
+      // Обновляем существующее
+      anime = await prisma.anime.update({
+        where: { id: existingAnime.id },
+        data: data,
+      });
+    } else {
+      // Создаём новое с эпизодами
+      anime = await prisma.anime.create({
+        data: {
+          ...data,
+          episodes: {
+            create: Array.from({ length: 5 }, (_, i) => ({
+              number: i + 1,
+              title: `Эпизод ${i + 1}`,
+              sources: {
+                create: [
+                  {
+                    playerType: 'iframe',
+                    url: `https://example.com/player/${data.title.replace(/\s/g, '')}/${i + 1}`,
+                    dubLang: 'ru',
+                    translator: 'Студия Аниме',
+                  },
+                  {
+                    playerType: 'iframe',
+                    url: `https://example.com/player/${data.title.replace(/\s/g, '')}/${i + 1}/en`,
+                    dubLang: 'en',
+                    translator: 'English Subs',
+                  },
+                ],
+              },
+            })),
+          },
+        },
+      });
+    }
     console.log(`✅ Аниме "${anime.title}" создано/обновлено`);
   }
 
