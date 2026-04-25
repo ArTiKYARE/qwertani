@@ -69,7 +69,8 @@ export class AnimeAdapter {
         throw new Error(`Ошибка внешнего API: ${response.status}`);
       }
 
-      return await response.json();
+      const result = await response.json() as { data: ExternalAnimeData[]; total: number };
+      return result;
     } catch (error) {
       console.error('Ошибка получения списка аниме из внешнего API:', error);
       // Фоллбэк на моки при ошибке
@@ -94,7 +95,8 @@ export class AnimeAdapter {
         return null;
       }
 
-      return await response.json();
+      const result = await response.json() as ExternalAnimeData;
+      return result;
     } catch (error) {
       console.error(`Ошибка получения деталей аниме ${externalId}:`, error);
       return this.getMockAnimeDetails(externalId);
@@ -209,7 +211,7 @@ export class AnimeAdapter {
 
     if (filters?.genres && filters.genres.length > 0) {
       filtered = filtered.filter(a => 
-        filters.genres.some(g => a.genres.includes(g))
+        filters.genres.some((g: string) => a.genres.includes(g))
       );
     }
 
