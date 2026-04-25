@@ -98,13 +98,13 @@ router.post('/login', async (req, res) => {
     const accessToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       config.jwtSecret,
-      { expiresIn: config.jwtExpiresIn }
+      { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       { id: user.id },
       config.jwtRefreshSecret,
-      { expiresIn: config.jwtRefreshExpiresIn }
+      { expiresIn: '7d' }
     );
 
     // Сохранение refresh токена
@@ -170,7 +170,7 @@ router.post('/refresh', async (req, res) => {
     const accessToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       config.jwtSecret,
-      { expiresIn: config.jwtExpiresIn }
+      { expiresIn: '15m' }
     );
 
     res.json({ accessToken });

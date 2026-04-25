@@ -64,7 +64,7 @@ export const authorize = (...roles: ('USER' | 'MODERATOR' | 'ADMIN')[]) => {
 /**
  * Опциональная аутентификация (не требует обязательного токена)
  */
-export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const optionalAuth = async (req: AuthRequest, _res: Response, next: NextFunction) => {
   try {
     const token = req.cookies?.accessToken || req.headers.authorization?.split(' ')[1];
 

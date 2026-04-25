@@ -11,7 +11,7 @@ async function seed() {
   const moderatorPassword = await bcrypt.hash('moderator123', 10);
   const userPassword = await bcrypt.hash('user123', 10);
 
-  const [admin, moderator, user] = await Promise.all([
+  await Promise.all([
     prisma.user.upsert({
       where: { email: 'admin@example.com' },
       update: {},
