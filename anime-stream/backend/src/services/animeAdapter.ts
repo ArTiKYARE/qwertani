@@ -70,6 +70,12 @@ export class AnimeAdapter {
       }
 
       const result = await response.json() as { data: ExternalAnimeData[]; total: number };
+      
+      // Проверка структуры результата
+      if (!result.data || typeof result.total !== 'number') {
+        throw new Error('Некорректный формат ответа от внешнего API');
+      }
+      
       return result;
     } catch (error) {
       console.error('Ошибка получения списка аниме из внешнего API:', error);
@@ -96,6 +102,12 @@ export class AnimeAdapter {
       }
 
       const result = await response.json() as ExternalAnimeData;
+      
+      // Проверка наличия обязательных полей
+      if (!result.id || !result.title) {
+        return null;
+      }
+      
       return result;
     } catch (error) {
       console.error(`Ошибка получения деталей аниме ${externalId}:`, error);
@@ -211,7 +223,7 @@ export class AnimeAdapter {
 
     if (filters?.genres && filters.genres.length > 0) {
       filtered = filtered.filter(a => 
-        filters.genres.some((g: string) => a.genres.includes(g))
+        filters.genres!.some((g: string) => a.genres.includes(g))
       );
     }
 
