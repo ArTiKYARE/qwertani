@@ -10,7 +10,7 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Установка зависимостей
-RUN npm ci
+RUN npm install
 
 # Генерация Prisma клиента
 RUN npx prisma generate
